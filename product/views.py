@@ -159,3 +159,21 @@ def pharmacy_product_detail(request, pk):
             "message": f"Error: {str(e)}",
             "data": {}
         }, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def total_stock_value(request):
+    try:
+        # Get all pharmacy products
+        products = PharmacyProduct.objects.all()
+        
+        # Calculate total stock value
+        total_value = sum(product.price * product.quantity for product in products)
+        
+        return Response({
+            'total_stock_value': total_value
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)       
